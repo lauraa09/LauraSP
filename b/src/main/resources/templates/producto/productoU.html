@@ -1,0 +1,46 @@
+<script>
+		 $(window).on("load",(function(){
+		 $(function() {
+		 $('#id-foto').change(function(e) {addImage(e);});
+		function addImage(e){
+			var file = e.target.files[0],
+			imageType = /image.*/;
+			if (!file.type.match(imageType)) return;
+			var reader = new FileReader();
+			reader.onload = fileOnload;
+			reader.readAsDataURL(file);
+		}
+		function fileOnload(e) {
+		var result=e.target.result;
+		$('#id-out-foto').attr("src",result);
+		}});}));
+</script>
+	
+<div class="container">
+	<h1>Editar producto</h1>
+
+	<a href="/">
+		<button>Cancelar</button>
+	</a>
+
+	<form method="post" enctype="multipart/form-data" action="/producto/u" class="form">
+
+		Nombre <input type="text" th:value="${producto.nombre}" name="nombre" autofocus="autofocus" class="form-item"> 
+		<br/>
+		
+		<div class="row">
+		Imagen <input id="id-foto"  type="file" name="img" class="form-item col-1"> 
+		<br/>
+
+		<img style="border-radius:50%; margin-bottom:15px;" class="offset-2 col-2" id="id-out-foto" width="3%" height="3%" th:src="${producto.img}" alt=""/>
+		</div>
+		
+		Precio <input type="number" step="0.01" name="precio" th:value="${producto.precio}" class="form-item"> 
+		<br/>
+
+		Stock inicial <input type="number" min="0" value="1" name="stock" th:value="${producto.stock}" class="form-item"> 
+		<br/>
+		
+		<input type="submit" class="form-item" />
+	</form>
+</div>

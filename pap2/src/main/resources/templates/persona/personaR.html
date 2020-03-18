@@ -1,0 +1,65 @@
+<div class="container">
+	<h1>Lista de personas</h1>
+
+	<a href="/persona/c">
+		<button>Crear</button>
+	</a> <a href="/">
+		<button>Cancelar</button>
+	</a>
+
+	<div class="row">
+		Filtro
+		<form>
+			<input type="text" name="f" th:value="${f}" />
+		</form>
+	</div>
+	
+	<table class="table table-striped">
+		<tr>
+			<th>Nombre</th>
+			<th>Loginname</th>
+			<th>Altura</th>
+			<th>Fecha nacimiento</th>
+			<th>País nac.</th>
+			<th>Gustos</th>
+			<th>Odios</th>
+			<th>Acción</th>
+		</tr>
+
+		<tr th:each="persona:${personas}">
+			<td th:utext="${#strings.replace(persona.nombre,f,'<kbd>'+f+'</kbd>')}"></td>
+
+			<td th:utext="${#strings.replace(persona.loginname,f,'<kbd>'+f+'</kbd>')}"></td>
+
+			<td th:utext="${#strings.replace(persona.altura,f,'<kbd>'+f+'</kbd>')}"></td>
+
+			<td th:utext="${#temporals.format(persona.fnac, 'dd-MM-yyyy')}"></td>
+
+			<td th:utext="${#strings.replace(persona.nace?.nombre,f,'<kbd>'+f+'</kbd>')}"></td>
+
+			<td>
+				<th:block th:each="gusto:${persona.gustos}" th:utext="|${#strings.replace(gusto.nombre,f,'<kbd>'+f+'</kbd>')} |"/>
+			</td>
+
+			<td>
+				<th:block th:each="odio:${persona.odios}" th:utext="|${#strings.replace(odio.nombre,f,'<kbd>'+f+'</kbd>')} |"/>
+			</td>
+
+			<td class="row">
+				<form action="/persona/u" method="get">
+					<input type="hidden" name="id" th:value="${persona.id}" />
+					<button onclick="submit()">
+						<img src="/img/edit.png" height="20" width="20">
+					</button>
+				</form>
+				<form action="/persona/d" method="post">
+					<input type="hidden" name="id" th:value="${persona.id}" />
+					<button onclick="submit()">
+						<img src="/img/delete.png" height="20" width="20">
+					</button>
+				</form>
+			</td>
+		</tr>
+
+	</table>
+</div>

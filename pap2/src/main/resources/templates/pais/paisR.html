@@ -1,0 +1,38 @@
+<div class="container">
+	<h1>Lista de países</h1>
+
+	<a href="/pais/c">
+		<button>Crear</button>
+	</a>
+
+	<a href="/">
+		<button>Cancelar</button>
+	</a>
+
+	<table class="table table-striped">
+		<tr>
+			<th>Nombre</th>
+			<th>Acción</th>
+		</tr>
+
+		<tr th:each="pais:${paises}">
+			<td th:text="${pais.nombre}"></td>
+
+			<td class="row">
+				<form action="/pais/u" method="get">
+					<input type="hidden" name="id" th:value="${pais.id}" />
+					<button onclick="submit()">
+						<img src="/img/edit.png" height="20" width="20">
+					</button>
+				</form>
+				<form action="/pais/d" method="post">
+					<input type="hidden" name="id" th:value="${pais.id}" />
+					<button onclick="submit()">
+						<img src="/img/delete.png" height="20" width="20">
+					</button>
+				</form>
+			</td>
+		</tr>
+
+	</table>
+</div>

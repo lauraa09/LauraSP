@@ -1,0 +1,36 @@
+<div class="container">
+	<h1>Lista de aficiones</h1>
+
+	<a href="/aficion/c">
+		<button>Crear</button>
+	</a> <a href="/">
+		<button>Cancelar</button>
+	</a>
+
+	<table class="table table-striped">
+		<tr>
+			<th>Nombre</th>
+			<th>Acciones</th>
+		</tr>
+
+		<tr th:each="aficion:${aficiones}">
+			<td th:text="${aficion.nombre}"></td>
+
+			<td class="row">
+				<form action="/aficion/u" method="get">
+					<input type="hidden" name="id" th:value="${aficion.id}" />
+					<button onclick="submit()">
+						<img src="/img/edit.png" height="20" width="20">
+					</button>
+				</form>
+				<form action="/aficion/d" method="post">
+					<input type="hidden" name="id" th:value="${aficion.id}" />
+					<button onclick="submit()">
+						<img src="/img/delete.png" height="20" width="20">
+					</button>
+				</form>
+			</td>
+		</tr>
+
+	</table>
+</div>
