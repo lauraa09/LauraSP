@@ -1,0 +1,21 @@
+<div class="container">
+	<form action="/carrito/r">
+		<input type="submit" value="cancelar" />
+	</form>
+	
+	<h1>Añadir productos al carrito</h1>
+
+	<form method="post" class="form">
+		Producto <select name="idProducto">
+			<option th:each="p:${productos}" th:text="|${p.nombre}-${p.precio}|"
+				th:value="${p.id}" />
+		</select>
+		<br />
+
+		Cantidad <input name="cantidad" type="number" value="1" min="1" />
+		<br />
+
+		<input type="submit" />
+	</form>
+
+</div>
