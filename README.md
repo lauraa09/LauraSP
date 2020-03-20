@@ -1,2 +1,0 @@
-# LauraSP
-Repositorio Spring Recuperación

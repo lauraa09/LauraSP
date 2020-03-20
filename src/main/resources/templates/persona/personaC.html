@@ -1,0 +1,53 @@
+<div class="container">
+	<h1>Nueva persona</h1>
+	<a href="/">
+		<button>Cancelar</button>
+	</a>
+
+	<form method="post" action="/persona/c" class="form">
+		Nombre
+		<input type="text" name="nombre" required="required">
+		<br/>
+		
+		Loginname (debe ser único)
+		<input type="text" name="loginname" required="required">
+		<br/>
+
+		Contraseña
+		<input type="password" name="password">
+		<br/>
+
+		Altura (cm)
+		<input type="number" name="altura" min="1" max="400" value="170">
+		<br/>
+		
+		Fecha de nacimiento
+		<input type="date" name="fnac" required="required" >
+		<br/>
+
+		País de nacimiento
+		<select name="idPais">
+			<option th:each="pais:${paises}" th:text="${pais.nombre}" th:value="${pais.id}"></option>
+		</select>
+		<br/>
+		
+		<fieldset>
+		<legend>Aficiones (gustos)</legend>
+			<span th:each="aficion:${aficiones}" >
+				<input type="checkbox" th:id="|idg-${aficion.id}|" th:name="idAficionGusta[]" th:value="${aficion.id}"/>
+				<label th:for="|idg-${aficion.id}|" th:text="${aficion.nombre}"></label>
+			</span>
+		</fieldset>
+		
+		<fieldset>
+		<legend>Aficiones (odios)</legend>
+			<span th:each="aficion:${aficiones}" >
+				<input type="checkbox" th:id="|ido-${aficion.id}|" th:name="idAficionOdio[]" th:value="${aficion.id}"/>
+				<label th:for="|ido-${aficion.id}|" th:text="${aficion.nombre}"></label>
+			</span>
+		
+		</fieldset>
+
+		<input type="submit" class="form-item" />
+	</form>
+</div>
