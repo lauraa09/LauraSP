@@ -1,5 +1,6 @@
 package org.agaray.pap.controller;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping(value = "/persona")
@@ -62,6 +64,7 @@ public class PersonaController {
 
 	@PostMapping("c")
 	public String crearPost(
+			@RequestParam("img") MultipartFile imgFile,
 			@RequestParam("nombre") String nombre,
 			@RequestParam("loginname") String loginname, 
 			@RequestParam("password") String password,
@@ -95,8 +98,27 @@ public class PersonaController {
 				aficion.getOdiosas().add(persona);
 				persona.getOdios().add(aficion);
 			}
+			
+			String uploadDir = "/img/upload/";
+			String uploadDirRealPath = "";
+			String fileName = "_p";
+			String fileExtension = "png";
+
+			if (imgFile != null && imgFile.getOriginalFilename().split("\\.").length == 2) {
+				fileName = "persona-" + persona.getLoginname();// foto persona
+				fileExtension = imgFile.getOriginalFilename().split("\\.")[1];
+				uploadDirRealPath = "C:\\workspaceSTS\\LauraSP\\src\\main\\resources\\static\\img\\upload\\";
+				// uploadDirRealPath = sc.getRealPath(uploadDir);
+				// uploadDirRealPath ="img/upload";
+				File transferFile = new File(uploadDirRealPath + fileName + "." + fileExtension);
+				imgFile.transferTo(transferFile);
+			}
+
+			String img = uploadDir + fileName + "." + fileExtension;
+			persona.setImg(img);
 
 			repoPersona.save(persona);
+			
 
 		} catch (Exception e) {
 			PRG.error("Error al crear " + nombre, "/persona/r");

@@ -16,6 +16,7 @@
 	
 	<table class="table table-striped">
 		<tr>
+			<th>Foto</th>
 			<th>Nombre</th>
 			<th>Loginname</th>
 			<th>Altura</th>
@@ -27,6 +28,9 @@
 		</tr>
 
 		<tr th:each="persona:${personas}">
+		
+			<td><img th:src="${persona.img}" height="40" width="40"/></td>
+			
 			<td th:utext="${#strings.replace(persona.nombre,f,'<kbd>'+f+'</kbd>')}"></td>
 
 			<td th:utext="${#strings.replace(persona.loginname,f,'<kbd>'+f+'</kbd>')}"></td>

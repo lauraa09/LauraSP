@@ -26,6 +26,9 @@ public class Persona {
 	private String nombre;
 
 	@Column(unique = true)
+	private String img;
+	
+	
 	private String loginname;
 
 	private String password;
@@ -54,13 +57,22 @@ public class Persona {
 
 	
 
-
-
 	public Venta getVentaencurso() {
 		return ventaencurso;
 	}
 
 
+	public String getImg() {
+		return img;
+	}
+
+
+
+
+
+	public void setImg(String img) {
+		this.img = img;
+	}
 
 
 

@@ -35,7 +35,7 @@ public class AnonymousController {
 	@GetMapping("/init")
 	public String initGet(ModelMap m) throws DangerException {
 		if (repoPersona.getByLoginname("admin") != null) {
-			PRG.error("BD no vacía");
+			PRG.error("404: Not found");
 		}
 		m.put("view", "/anonymous/init");
 		return "/_t/frame";
@@ -44,9 +44,10 @@ public class AnonymousController {
 	@PostMapping("/init")
 	public String initPost(@RequestParam("password") String password, ModelMap m) throws DangerException {
 		if (repoPersona.getByLoginname("admin") != null) {
-			PRG.error("Operación no válida. BD no vacía");
+			PRG.error("404: Not found");
 		}
 		BCryptPasswordEncoder bpe = new BCryptPasswordEncoder();
+		
 		if (!bpe.matches(password, bpe.encode("admin"))) { // Password harcoded
 			PRG.error("Contraseña incorrecta","/init");
 		}
@@ -106,6 +107,7 @@ public class AnonymousController {
 				throw new Exception();
 			}
 			s.setAttribute("persona", persona);
+			
 		} catch (Exception e) {
 			PRG.error("Usuario o contraseña incorrecta", "/login");
 		}

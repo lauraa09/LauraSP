@@ -1,5 +1,9 @@
 <div class="container">
-	<h1>Bienvenido a la aplicación P.A.P.</h1>
+	<h1 th:if="${session.persona == null}">Bienvenido Desconocido</h1>
+	
+	<h1 th:if="${session.persona != null}" th:text ="|Bienvenido ${session.persona.nombre}|"></h1>
+	
+	<div th:if="${session.persona != null}">
 	
 	<form action="/pais/r">
 		<input type="submit" value="Países"/>
@@ -20,5 +24,7 @@
 	<form action="/carrito/r">
 		<input type="submit" value="Carrito"/>
 	</form>
+	
+	</div>
 
 </div>

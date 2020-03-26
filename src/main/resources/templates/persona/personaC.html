@@ -1,10 +1,32 @@
+<script>
+		 $(window).on("load",(function(){
+		 $(function() {
+		 $('#id-foto').change(function(e) {addImage(e);});
+		function addImage(e){
+			var file = e.target.files[0],
+			imageType = /image.*/;
+			if (!file.type.match(imageType)) return;
+			var reader = new FileReader();
+			reader.onload = fileOnload;
+			reader.readAsDataURL(file);
+		}
+		function fileOnload(e) {
+		var result=e.target.result;
+		$('#id-out-foto').attr("src",result);
+		}});}));
+</script>
+
 <div class="container">
 	<h1>Nueva persona</h1>
 	<a href="/">
 		<button>Cancelar</button>
 	</a>
 
-	<form method="post" action="/persona/c" class="form">
+	<form method="post" action="/persona/c" class="form" enctype="multipart/form-data">
+	
+		Imagen <input id="id-foto" type="file" name="img" class="form-item col-1"> 
+		<br/>
+		
 		Nombre
 		<input type="text" name="nombre" required="required">
 		<br/>
@@ -18,7 +40,7 @@
 		<br/>
 
 		Altura (cm)
-		<input type="number" name="altura" min="1" max="400" value="170">
+		<input type="number" name="altura" min="0" max="400" value="170">
 		<br/>
 		
 		Fecha de nacimiento

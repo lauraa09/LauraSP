@@ -77,7 +77,7 @@ public class ProductoController {
 			if (imgFile != null && imgFile.getOriginalFilename().split("\\.").length == 2) {
 				fileName = "p-" + producto.getId();
 				fileExtension = imgFile.getOriginalFilename().split("\\.")[1];
-				uploadDirRealPath = "C:\\agaray\\workspaceSTS\\pap\\src\\main\\resources\\static\\img\\upload\\";
+				uploadDirRealPath = "C:\\workspaceSTS\\LauraSP\\src\\main\\resources\\static\\img\\upload\\";
 				// uploadDirRealPath = sc.getRealPath(uploadDir);
 				// uploadDirRealPath ="img/upload";
 				File transferFile = new File(uploadDirRealPath + fileName + "." + fileExtension);
