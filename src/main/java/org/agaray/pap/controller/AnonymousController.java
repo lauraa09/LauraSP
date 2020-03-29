@@ -13,12 +13,14 @@ import org.agaray.pap.repository.AficionRepository;
 import org.agaray.pap.repository.PaisRepository;
 import org.agaray.pap.repository.PersonaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
 @Controller
 public class AnonymousController {
@@ -33,9 +35,10 @@ public class AnonymousController {
 	PaisRepository repoPais;
 
 	@GetMapping("/init")
-	public String initGet(ModelMap m) throws DangerException {
+	public String initGet(ModelMap m) throws DangerException { 
 		if (repoPersona.getByLoginname("admin") != null) {
-			PRG.error("404: Not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+			//PRG.error("BD no vacía");
 		}
 		m.put("view", "/anonymous/init");
 		return "/_t/frame";
@@ -44,12 +47,16 @@ public class AnonymousController {
 	@PostMapping("/init")
 	public String initPost(@RequestParam("password") String password, ModelMap m) throws DangerException {
 		if (repoPersona.getByLoginname("admin") != null) {
-			PRG.error("404: Not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+			//PRG.error("Operación no válida. BD no vacía");
+			
+			
 		}
 		BCryptPasswordEncoder bpe = new BCryptPasswordEncoder();
 		
 		if (!bpe.matches(password, bpe.encode("admin"))) { // Password harcoded
-			PRG.error("Contraseña incorrecta","/init");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+			//PRG.error("Contraseña incorrecta","/init");
 		}
 		repoPersona.deleteAll();
 		repoPais.deleteAll();
