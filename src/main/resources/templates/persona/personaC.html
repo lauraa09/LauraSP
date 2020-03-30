@@ -49,6 +49,7 @@
 
 		País de nacimiento
 		<select name="idPais">
+			<option value="">---</option>
 			<option th:each="pais:${paises}" th:text="${pais.nombre}" th:value="${pais.id}"></option>
 		</select>
 		<br/>
