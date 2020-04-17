@@ -169,6 +169,12 @@ public class Persona {
 	}
 
 
+	public Persona(String loginname, String password) {
+		super();
+		this.loginname = loginname;
+		this.password = (new BCryptPasswordEncoder()).encode(password); //encrypta
+	}
+
 
 	public Long getId() {
 		return id;

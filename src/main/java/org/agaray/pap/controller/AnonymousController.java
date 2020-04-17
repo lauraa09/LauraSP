@@ -4,9 +4,11 @@ package org.agaray.pap.controller;
 import java.time.LocalDate;
 
 import javax.servlet.http.HttpSession;
+import javax.websocket.Session;
 
 import org.agaray.pap.domain.Persona;
 import org.agaray.pap.exception.DangerException;
+import org.agaray.pap.exception.InfoException;
 import org.agaray.pap.helper.H;
 import org.agaray.pap.helper.PRG;
 import org.agaray.pap.repository.AficionRepository;
@@ -36,34 +38,36 @@ public class AnonymousController {
 
 	@GetMapping("/init")
 	public String initGet(ModelMap m) throws DangerException { 
-		if (repoPersona.getByLoginname("admin") != null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-			//PRG.error("BD no vacía");
-		}
+//		if (repoPersona.getByLoginname("admin") != null) {
+//			//throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+//			PRG.error("BD no vacía");
+//		}
 		m.put("view", "/anonymous/init");
 		return "/_t/frame";
 	}
 
 	@PostMapping("/init")
 	public String initPost(@RequestParam("password") String password, ModelMap m) throws DangerException {
-		if (repoPersona.getByLoginname("admin") != null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-			//PRG.error("Operación no válida. BD no vacía");
-			
-			
-		}
+//		if (repoPersona.getByLoginname("admin") != null) {
+//			//throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+//			//PRG.error("Operación no válida. BD no vacía");
+//		}
 		BCryptPasswordEncoder bpe = new BCryptPasswordEncoder();
 		
 		if (!bpe.matches(password, bpe.encode("admin"))) { // Password harcoded
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-			//PRG.error("Contraseña incorrecta","/init");
+			//throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+			PRG.error("Contraseña incorrecta","/init");
 		}
 		repoPersona.deleteAll();
 		repoPais.deleteAll();
 		repoAficion.deleteAll();
 		repoPersona.save(new Persona("Administrador","admin","admin",170,LocalDate.now()));
-		return "redirect:/";
+		
+		m.put("view", "/anonymous/recrearBD");
+		return "/_t/frame";
+	
 	}
+	
 
 	@GetMapping("/info")
 	public String info(HttpSession s, ModelMap m) {
@@ -90,12 +94,43 @@ public class AnonymousController {
 		m.put("view", "/anonymous/home");
 		return "/_t/frame";
 	}
-
+	//==========================//
+	
 	@GetMapping("/registro")
-	public String registro(ModelMap m) {
-		return "redirect:/persona/c";
+	public String registroGet(ModelMap m, HttpSession s) throws DangerException {
+		m.put("view", "/anonymous/registro");
+		return "/_t/frame";
 	}
-
+	
+	
+	@PostMapping("/registro")
+	public void registroPost(@RequestParam("loginname") String loginname,@RequestParam("password") String password, 
+			ModelMap m, HttpSession s) throws Exception {
+			
+			try {
+				H.isRolOK("anon", s);
+				Persona persona=new Persona(loginname,password); 
+				
+				if(repoPersona.getByLoginname(loginname)==null) {
+					
+					s.setAttribute("persona", persona);
+					repoPersona.save(persona);			
+					
+					PRG.info("Usuario creado correctamente ", "/persona/r");			
+				}	
+				else {
+					PRG.error("Loginname " + loginname + " duplicado", "/");	
+				}
+				
+			} catch (Exception e) {
+			
+				PRG.info(e.getMessage(), "/persona/r");
+			}
+				return;
+		
+	}
+	
+//===========================
 	@GetMapping("/login")
 	public String loginGet(ModelMap m, HttpSession s) throws DangerException {
 		H.isRolOK("anon", s);
