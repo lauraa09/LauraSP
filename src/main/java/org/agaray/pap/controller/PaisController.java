@@ -28,8 +28,9 @@ public class PaisController {
 	@GetMapping("r")
 	public String read(ModelMap m, HttpSession s) throws DangerException {
 		H.isRolOK("auth", s);
-		List<Pais> paises = repoPais.findAll();
-		m.put("paises", paises);
+		//List<Pais> paises = repoPais.findAll();
+		List<Pais> paisesOrdenados = repoPais.findAllByOrderByNombreAsc();
+		m.put("paises", paisesOrdenados);
 
 		m.put("view", "/pais/paisR");
 		return "/_t/frame";

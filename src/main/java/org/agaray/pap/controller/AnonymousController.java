@@ -116,7 +116,7 @@ public class AnonymousController {
 					s.setAttribute("persona", persona);
 					repoPersona.save(persona);			
 					
-					PRG.info("Usuario creado correctamente ", "/persona/r");			
+					PRG.info("Usuario " + loginname+ " creado correctamente ", "/persona/r");			
 				}	
 				else {
 					PRG.error("Loginname " + loginname + " duplicado", "/");	

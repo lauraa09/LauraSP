@@ -1,6 +1,9 @@
 package org.agaray.pap.controller;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +78,7 @@ public class PersonaController {
 			@RequestParam(value = "idPais", required = false) Long idPais,
 			@RequestParam(value = "idAficionGusta[]", required = false) List<Long> idGustos,
 			@RequestParam(value = "idAficionOdio[]", required = false) List<Long> idOdios,
-			HttpSession s) throws DangerException {
+			HttpSession s, String UPLOADED_FOLDER) throws DangerException {
 		try {
 			H.isRolOK("admin", s);
 			Persona persona = new Persona(nombre, loginname, password, altura, fnac);
@@ -101,11 +104,14 @@ public class PersonaController {
 			
 			String uploadDir = "/img/upload/";
 			String uploadDirRealPath = "";
-			String fileName = "_p";
+			String fileName = "persona-";
 			String fileExtension = "png";
 
 			if (imgFile != null && imgFile.getOriginalFilename().split("\\.").length == 2) {
-				fileName = "persona-" + persona.getLoginname();// foto persona
+				byte[] bytes = imgFile.getBytes();
+				Path path = Paths.get(UPLOADED_FOLDER, fileName + persona.getLoginname());
+				Files.write(path, bytes);
+				//fileName = "persona-" + persona.getLoginname();// foto persona
 				fileExtension = imgFile.getOriginalFilename().split("\\.")[1];
 				uploadDirRealPath = "C:\\workspaceSTS\\LauraSP\\src\\main\\resources\\static\\img\\upload\\";
 				// uploadDirRealPath = sc.getRealPath(uploadDir);

@@ -12,12 +12,13 @@
 	<table class="table table-striped">
 		<tr>
 			<th>Nombre</th>
+			<th>Total de usuarios registrados</th>
 			<th>Acción</th>
 		</tr>
 
 		<tr th:each="pais:${paises}">
 			<td th:text="${pais.nombre}"></td>
-
+			<td th:text="${pais.nacidos.size()}"></td>
 			<td class="row">
 				<form action="/pais/u" method="get">
 					<input type="hidden" name="id" th:value="${pais.id}" />
@@ -26,10 +27,12 @@
 					</button>
 				</form>
 				<form action="/pais/d" method="post">
-					<input type="hidden" name="id" th:value="${pais.id}" />
-					<button onclick="submit()">
-						<img src="/img/delete.png" height="20" width="20">
-					</button>
+					<input type="hidden" name="id" th:value="${pais.id}"/>
+					<span th:if="${pais.nacidos.size()== 0}">
+						<button onclick="submit()">
+							<img src="/img/delete.png" height="20" width="20">
+						</button>
+					</span>
 				</form>
 			</td>
 		</tr>

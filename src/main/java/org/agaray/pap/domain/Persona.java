@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Entity
@@ -26,9 +27,12 @@ public class Persona {
 	private String nombre;
 
 	@Column(unique = true)
+	
+	@Value("${app.uploadFolder}")
+	private String UPLOADED_FOLDER;
+	
 	private String img;
-	
-	
+		
 	private String loginname;
 
 	private String password;
@@ -59,6 +63,16 @@ public class Persona {
 
 	public Venta getVentaencurso() {
 		return ventaencurso;
+	}
+
+
+	public String getUPLOADED_FOLDER() {
+		return UPLOADED_FOLDER;
+	}
+
+
+	public void setUPLOADED_FOLDER(String uPLOADED_FOLDER) {
+		UPLOADED_FOLDER = uPLOADED_FOLDER;
 	}
 
 

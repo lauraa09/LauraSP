@@ -1,7 +1,8 @@
 <div class="container">
 	<div class="jumbotron">
 	<h1>Bienvenido a la aplicación P.A.P.</h1>
-		<h2 th:if="${session.persona != null}" th:text ="|Bienvenido ${session.persona.nombre}|"></h2>
+		<h2 th:if="${session.persona != null}" th:text ="|Bienvenido ${session.persona.loginname}|"></h2>
+		<h2 th:if="${session.persona == null}" th:text ="Bienvenido"></h2>
 		Esta es mi home page 
 			
 			
