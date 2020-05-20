@@ -22,6 +22,7 @@
 			<th>Altura</th>
 			<th>Fecha nacimiento</th>
 			<th>País nac.</th>
+			<th>Venta en Curso</th>
 			<th>Gustos</th>
 			<th>Odios</th>
 			<th>Acción</th>
@@ -29,7 +30,7 @@
 
 		<tr th:each="persona:${personas}">
 		
-			<td><img th:src="${persona.img}" height="40" width="40"/></td>
+			<td><img th:src="|/img/upload/persona-${persona.id}.${persona.foto}|" width="50" height="50"/></td>
 			
 			<td th:utext="${#strings.replace(persona.nombre,f,'<kbd>'+f+'</kbd>')}"></td>
 
@@ -40,6 +41,8 @@
 			<td th:utext="${#temporals.format(persona.fnac, 'dd-MM-yyyy')}"></td>
 
 			<td th:utext="${#strings.replace(persona.nace?.nombre,f,'<kbd>'+f+'</kbd>')}"></td>
+			
+			<td th:utext="${#strings.replace(persona.ventaencurso?.fecha,f,'<kbd>'+f+'</kbd>')}"></td>
 
 			<td>
 				<th:block th:each="gusto:${persona.gustos}" th:utext="|${#strings.replace(gusto.nombre,f,'<kbd>'+f+'</kbd>')} |"/>

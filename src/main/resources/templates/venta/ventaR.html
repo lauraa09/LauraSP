@@ -1,0 +1,22 @@
+<div class="container">
+	<h1>Lista de Ventas</h1>
+
+	<a href="/venta/c">
+		<button>Crear</button>
+	</a>
+
+	<a href="/">
+		<button>Cancelar</button>
+	</a>
+
+	<table class="table table-striped">
+		<tr>
+			<th>Fecha</th>
+			<th>Acción</th>
+		</tr>
+		<tr th:each="venta:${ventas}">
+			<td th:utext="${#temporals.format(venta.fecha, 'dd-MM-yyyy')}"></td>
+		</tr>
+
+	</table>
+</div>

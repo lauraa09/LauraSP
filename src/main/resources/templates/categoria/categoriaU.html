@@ -1,0 +1,11 @@
+<div class="container">
+	<h1>Editar Categoria</h1>
+	<form method="post" action="/categoria/u" class="form">
+		Nombre
+		<input type="text" name="nombre" th:value="${categoria.nombre}" autofocus="autofocus">
+		
+		<input type="hidden" name="id" th:value="${categoria.id}"/>
+		
+		<input type="submit" class="form-item" />
+	</form>
+</div>

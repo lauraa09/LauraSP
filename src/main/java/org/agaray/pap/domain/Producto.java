@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -26,6 +27,9 @@ public class Producto {
 	
 	@OneToMany(mappedBy = "producto")
 	private Collection<LineaDeVenta> ldvs;
+	
+	@ManyToOne
+	private Categoria categoria;
 
 	// ===========================
 
@@ -87,6 +91,14 @@ public class Producto {
 
 	public void setPrecio(Double precio) {
 		this.precio = precio;
+	}
+
+	public Categoria getCategoria() {
+		return categoria;
+	}
+
+	public void setCategoria(Categoria categoria) {
+		this.categoria = categoria;
 	}
 
 	// ========================

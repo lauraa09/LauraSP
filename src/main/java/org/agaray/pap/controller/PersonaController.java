@@ -1,6 +1,6 @@
 package org.agaray.pap.controller;
 
-import java.io.File;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,16 +11,22 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.agaray.pap.domain.Aficion;
+import org.agaray.pap.domain.LineaDeVenta;
 import org.agaray.pap.domain.Pais;
 import org.agaray.pap.domain.Persona;
+import org.agaray.pap.domain.Venta;
 import org.agaray.pap.exception.DangerException;
 import org.agaray.pap.helper.H;
 import org.agaray.pap.helper.PRG;
 import org.agaray.pap.repository.AficionRepository;
 import org.agaray.pap.repository.PaisRepository;
 import org.agaray.pap.repository.PersonaRepository;
+import org.agaray.pap.repository.VentaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.convert.JodaTimeConverters.DateTimeToDateConverter;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +47,13 @@ public class PersonaController {
 
 	@Autowired
 	private AficionRepository repoAficion;
+	
+	@Autowired
+	private VentaRepository repoVenta;
+	
+	
+	@Value("${app.uploadFolder}")
+	private String UPLOAD_FOLDER;
 
 	@PostMapping("d")
 	public String borrarPost(@RequestParam("id") Long idPersona, HttpSession s) throws DangerException {
@@ -61,13 +74,14 @@ public class PersonaController {
 		H.isRolOK("admin", s);
 		m.put("paises", repoPais.findAll());
 		m.put("aficiones", repoAficion.findAll());
+		m.put("ventas", repoVenta.findAll());
 		m.put("view", "/persona/personaC");
 		return "/_t/frame";
 	}
 
 	@PostMapping("c")
 	public String crearPost(
-			@RequestParam("img") MultipartFile imgFile,
+			@RequestParam("foto") MultipartFile imgFile,
 			@RequestParam("nombre") String nombre,
 			@RequestParam("loginname") String loginname, 
 			@RequestParam("password") String password,
@@ -76,12 +90,18 @@ public class PersonaController {
 			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 			LocalDate fnac,
 			@RequestParam(value = "idPais", required = false) Long idPais,
+			@RequestParam(value = "idVenta", required = false) Long idVenta,
 			@RequestParam(value = "idAficionGusta[]", required = false) List<Long> idGustos,
 			@RequestParam(value = "idAficionOdio[]", required = false) List<Long> idOdios,
-			HttpSession s, String UPLOADED_FOLDER) throws DangerException {
+			HttpSession s) throws DangerException {
 		try {
 			H.isRolOK("admin", s);
-			Persona persona = new Persona(nombre, loginname, password, altura, fnac);
+			
+			String extensionFoto = null;
+			extensionFoto = imgFile.getOriginalFilename().split("\\.")[1];
+			
+			Persona persona = new Persona(nombre, extensionFoto, loginname, password, altura, fnac);
+			
 			if (idPais != null) {
 				Pais paisNacimiento = repoPais.getOne(idPais);
 				paisNacimiento.getNacidos().add(persona);
@@ -102,30 +122,46 @@ public class PersonaController {
 				persona.getOdios().add(aficion);
 			}
 			
-			String uploadDir = "/img/upload/";
-			String uploadDirRealPath = "";
-			String fileName = "persona-";
-			String fileExtension = "png";
+		
+			//======NUEVA VENTA EN CURSO Y ASOCIAR A LA PERSONA ( REL. UNO A UNO)======//
 
-			if (imgFile != null && imgFile.getOriginalFilename().split("\\.").length == 2) {
-				byte[] bytes = imgFile.getBytes();
-				Path path = Paths.get(UPLOADED_FOLDER, fileName + persona.getLoginname());
-				Files.write(path, bytes);
-				//fileName = "persona-" + persona.getLoginname();// foto persona
-				fileExtension = imgFile.getOriginalFilename().split("\\.")[1];
-				uploadDirRealPath = "C:\\workspaceSTS\\LauraSP\\src\\main\\resources\\static\\img\\upload\\";
-				// uploadDirRealPath = sc.getRealPath(uploadDir);
-				// uploadDirRealPath ="img/upload";
-				File transferFile = new File(uploadDirRealPath + fileName + "." + fileExtension);
-				imgFile.transferTo(transferFile);
-			}
-
-			String img = uploadDir + fileName + "." + fileExtension;
-			persona.setImg(img);
-
+			Venta ventaEnCurso = new Venta();
+			ventaEnCurso = repoVenta.getOne(idVenta);
+			ventaEnCurso.setPersona(persona);
+			persona.setVentaencurso(ventaEnCurso);
+			
 			repoPersona.save(persona);
 			
+			
+			byte[] contenido = imgFile.getBytes();
+			Path path = Paths.get(UPLOAD_FOLDER + "persona-" + persona.getId()+ "." + persona.getFoto());
+			Files.write(path, contenido);
+			
+		
+			
+			
+			
+//			String uploadDir = "/img/upload/";
+//			String uploadDirRealPath = "";
+//			String fileName = "_p";
+//			String fileExtension = "png";
+//
+//			if (imgFile != null && imgFile.getOriginalFilename().split("\\.").length == 2) {
+//				fileName = "persona-" + persona.getLoginname();// foto persona
+//				fileExtension = imgFile.getOriginalFilename().split("\\.")[1];
+//				uploadDirRealPath = "C:\\workspaceSTS\\LauraSP\\src\\main\\resources\\static\\img\\upload\\";
+//				// uploadDirRealPath = sc.getRealPath(uploadDir);
+//				// uploadDirRealPath ="img/upload";
+//				File transferFile = new File(uploadDirRealPath + fileName + "." + fileExtension);
+//				imgFile.transferTo(transferFile);
+//			}
+//
+//			String img = uploadDir + fileName + "." + fileExtension;
+//			persona.setImg(img);
 
+			
+
+			
 		} catch (Exception e) {
 			PRG.error("Error al crear " + nombre, "/persona/r");
 		}
@@ -134,7 +170,8 @@ public class PersonaController {
 
 	@GetMapping("r")
 	public String read(ModelMap m, @RequestParam(value = "f", required = false) String f, HttpSession s) throws DangerException {
-		H.isRolOK("auth", s);
+		//H.isRolOK("auth", s);
+		//H.isRolOK("anon", s);
 
 		f = (f == null) ? "" : f;
 		m.put("f", f);

@@ -25,14 +25,10 @@ public class Persona {
 	private Long id;
 
 	private String nombre;
+	
+	private String foto;
 
 	@Column(unique = true)
-	
-	@Value("${app.uploadFolder}")
-	private String UPLOADED_FOLDER;
-	
-	private String img;
-		
 	private String loginname;
 
 	private String password;
@@ -65,46 +61,22 @@ public class Persona {
 		return ventaencurso;
 	}
 
-
-	public String getUPLOADED_FOLDER() {
-		return UPLOADED_FOLDER;
+	public String getFoto() {
+		return foto;
 	}
 
-
-	public void setUPLOADED_FOLDER(String uPLOADED_FOLDER) {
-		UPLOADED_FOLDER = uPLOADED_FOLDER;
+	public void setFoto(String foto) {
+		this.foto = foto;
 	}
-
-
-	public String getImg() {
-		return img;
-	}
-
-
-
-
-
-	public void setImg(String img) {
-		this.img = img;
-	}
-
-
 
 	public void setVentaencurso(Venta ventaencurso) {
 		this.ventaencurso = ventaencurso;
 	}
 
 
-
-
-
 	public Collection<Venta> getVentas() {
 		return ventas;
 	}
-
-
-
-
 
 	public void setVentas(Collection<Venta> ventas) {
 		this.ventas = ventas;
@@ -147,6 +119,8 @@ public class Persona {
 	public void setFnac(LocalDate fnac) {
 		this.fnac = fnac;
 	}
+	
+	
 
 	public Persona() {
 		this.gustos = new ArrayList<Aficion>();
@@ -182,11 +156,28 @@ public class Persona {
 		this.ventas = new ArrayList<Venta>();
 	}
 
-
+	//constructor login usuario
 	public Persona(String loginname, String password) {
 		super();
 		this.loginname = loginname;
 		this.password = (new BCryptPasswordEncoder()).encode(password); //encrypta
+	}
+
+	//constructor c persona 
+	public Persona(String nombre, String foto, String loginname, String password, Integer altura, LocalDate fnac){
+		super();
+		this.nombre = nombre;
+		this.foto = foto;
+		this.loginname = loginname;
+		this.password = (new BCryptPasswordEncoder()).encode(password); //encrypta
+		this.altura = altura;
+		this.fnac = fnac;
+
+		this.gustos = new ArrayList<Aficion>();
+		this.odios = new ArrayList<Aficion>();
+		this.ventas = new ArrayList<Venta>();
+		this.ventaencurso = new Venta();
+		this.ventaencurso.setPersonaencurso(this);
 	}
 
 

@@ -1,0 +1,41 @@
+<div class="container">
+	<h1>Lista de Categorías</h1>
+
+	<a href="/categoria/c">
+		<button>Crear</button>
+	</a>
+
+	<a href="/">
+		<button>Cancelar</button>
+	</a>
+
+	<table class="table table-striped">
+		<tr>
+			<th>Nombre</th>
+			<th>Cantidad de productos registrados</th>
+			<th>Acción</th>
+		</tr>
+
+		<tr th:each="categoria:${categorias}">
+			<td th:text="${categoria.nombre}"></td>
+			<td th:text="${categoria.categorias.size()}"></td>
+			<td class="row">
+				<form action="/categoria/u" method="get">
+					<input type="hidden" name="id" th:value="${categoria.id}" />
+					<button onclick="submit()">
+						<img src="/img/edit.png" height="20" width="20">
+					</button>
+				</form>
+				<form action="/categoria/d" method="post">
+					<input type="hidden" name="id" th:value="${categoria.id}"/>
+					<span th:if="${categoria.categorias.size()== 0}">
+						<button onclick="submit()">
+							<img src="/img/delete.png" height="20" width="20">
+						</button>
+					</span>
+				</form>
+			</td>
+		</tr>
+
+	</table>
+</div>

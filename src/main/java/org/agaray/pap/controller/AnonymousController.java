@@ -1,11 +1,18 @@
 
 package org.agaray.pap.controller;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 import javax.websocket.Session;
 
+import org.agaray.pap.domain.Aficion;
+import org.agaray.pap.domain.Pais;
 import org.agaray.pap.domain.Persona;
 import org.agaray.pap.exception.DangerException;
 import org.agaray.pap.exception.InfoException;
@@ -15,13 +22,17 @@ import org.agaray.pap.repository.AficionRepository;
 import org.agaray.pap.repository.PaisRepository;
 import org.agaray.pap.repository.PersonaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 @Controller
@@ -35,6 +46,9 @@ public class AnonymousController {
 
 	@Autowired
 	PaisRepository repoPais;
+	
+	@Value("${app.uploadFolder}")
+	private String UPLOAD_FOLDER;
 
 	@GetMapping("/init")
 	public String initGet(ModelMap m) throws DangerException { 
@@ -101,27 +115,59 @@ public class AnonymousController {
 		m.put("view", "/anonymous/registro");
 		return "/_t/frame";
 	}
-	
+
 	
 	@PostMapping("/registro")
-	public void registroPost(@RequestParam("loginname") String loginname,@RequestParam("password") String password, 
+	public void registroPost(
+			@RequestParam("foto") MultipartFile imgFile,
+			@RequestParam("nombre") String nombre,
+			@RequestParam("loginname") String loginname, 
+			@RequestParam("password") String password,
+			@RequestParam(value="altura", required=false) Integer altura, 
+			@RequestParam(value="fnac", required=false)
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+			LocalDate fnac,
+			@RequestParam(value = "idPais", required = false) Long idPais,
+			@RequestParam(value = "idAficionGusta[]", required = false) List<Long> idGustos,
+			@RequestParam(value = "idAficionOdio[]", required = false) List<Long> idOdios,
 			ModelMap m, HttpSession s) throws Exception {
 			
 			try {
 				H.isRolOK("anon", s);
-				Persona persona=new Persona(loginname,password); 
+				String extensionFoto = null;
+				extensionFoto = imgFile.getOriginalFilename().split("\\.")[1];
 				
-				if(repoPersona.getByLoginname(loginname)==null) {
-					
-					s.setAttribute("persona", persona);
-					repoPersona.save(persona);			
-					
-					PRG.info("Usuario " + loginname+ " creado correctamente ", "/persona/r");			
-				}	
-				else {
-					PRG.error("Loginname " + loginname + " duplicado", "/");	
+				Persona persona = new Persona(nombre, extensionFoto, loginname, password, altura, fnac);
+				
+				if (idPais != null) {
+					Pais paisNacimiento = repoPais.getOne(idPais);
+					paisNacimiento.getNacidos().add(persona);
+					persona.setNace(paisNacimiento);
+				}
+
+				idGustos = (idGustos == null ? new ArrayList<Long>() : idGustos);
+				for (Long id : idGustos) {
+					Aficion aficion = repoAficion.getOne(id);
+					aficion.getGustosas().add(persona);
+					persona.getGustos().add(aficion);
+				}
+
+				idOdios = (idOdios == null ? new ArrayList<Long>() : idOdios);
+				for (Long id : idOdios) {
+					Aficion aficion = repoAficion.getOne(id);
+					aficion.getOdiosas().add(persona);
+					persona.getOdios().add(aficion);
 				}
 				
+				repoPersona.save(persona);
+				
+				byte[] contenido = imgFile.getBytes();
+				Path path = Paths.get(UPLOAD_FOLDER + "persona-" + persona.getId()+ "." + persona.getFoto());
+				Files.write(path, contenido);
+				
+				
+                PRG.info("Usuario " + loginname + " creado correctamente ", "/persona/r");	
+												
 			} catch (Exception e) {
 			
 				PRG.info(e.getMessage(), "/persona/r");
@@ -129,8 +175,8 @@ public class AnonymousController {
 				return;
 		
 	}
-	
 //===========================
+	
 	@GetMapping("/login")
 	public String loginGet(ModelMap m, HttpSession s) throws DangerException {
 		H.isRolOK("anon", s);
@@ -139,8 +185,11 @@ public class AnonymousController {
 	}
 
 	@PostMapping("/login")
-	public String loginPost(@RequestParam("loginname") String loginname, @RequestParam("password") String password,
+	public String loginPost(
+			@RequestParam("loginname") String loginname, 
+			@RequestParam("password") String password,
 			ModelMap m, HttpSession s) throws DangerException {
+			
 		H.isRolOK("anon", s);
 
 		try {

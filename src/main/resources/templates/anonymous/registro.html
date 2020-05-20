@@ -1,17 +1,78 @@
+<script>
+		 $(window).on("load",(function(){
+		 $(function() {
+		 $('#id-foto').change(function(e) {addImage(e);});
+		function addImage(e){
+			var file = e.target.files[0],
+			imageType = /image.*/;
+			if (!file.type.match(imageType)) return;
+			var reader = new FileReader();
+			reader.onload = fileOnload;
+			reader.readAsDataURL(file);
+		}
+		function fileOnload(e) {
+		var result=e.target.result;
+		$('#id-out-foto').attr("src",result);
+		}});}));
+</script> 
+
 <div class="container">
-	<h1>Introducir credenciales</h1>
-	<form class="form" method="post">
+	<h1>Nueva persona</h1>
 	
-		Nombre de usuario
-		<input type="text" name="loginname" class="form-item" autofocus="autofocus"/>
+	<a href="/">
+		<button>Cancelar</button>
+	</a>
+	<form class="form" method="post" enctype="multipart/form-data">
+	
+		Imagen <input id="id-foto" type="file" name="foto" class="form-item col-1"> 
+		<img class ="offset-1 col-2" id ="id-out-foto" width="40" height="70" src="" alt="">
 		<br/>
 		
+		Nombre
+		<input type="text" name="nombre" required="required">
+		<br/>
+		
+		Loginname (debe ser único)
+		<input type="text" name="loginname" required="required">
+		<br/>
+
 		Contraseña
-		<input type="password" name="password" class="form-item"/>
+		<input type="password" name="password">
+		<br/>
+
+		Altura (cm)
+		<input type="number" name="altura" min="0" max="400" value="170">
 		<br/>
 		
-		<input type="submit" />
+		Fecha de nacimiento
+		<input type="date" name="fnac" required="required"  value="1999-06-09">
 		<br/>
+
+		País de nacimiento
+		<select name="idPais">
+			<option value="">---</option>
+			<option th:each="pais:${paises}" th:text="${pais.nombre}" th:value="${pais.id}"></option>
+		</select>
+		<br/>
+		
+		<fieldset>
+		<legend>Aficiones (gustos)</legend>
+			<span th:each="aficion:${aficiones}" >
+				<input type="checkbox" th:id="|idg-${aficion.id}|" th:name="idAficionGusta[]" th:value="${aficion.id}"/>
+				<label th:for="|idg-${aficion.id}|" th:text="${aficion.nombre}"></label>
+			</span>
+		</fieldset>
+		
+		<fieldset>
+		<legend>Aficiones (odios)</legend>
+			<span th:each="aficion:${aficiones}" >
+				<input type="checkbox" th:id="|ido-${aficion.id}|" th:name="idAficionOdio[]" th:value="${aficion.id}"/>
+				<label th:for="|ido-${aficion.id}|" th:text="${aficion.nombre}"></label>
+			</span>
+		
+		</fieldset>
+
+		<input type="submit" class="form-item" />
 		
 		
 	</form>
