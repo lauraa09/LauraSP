@@ -90,7 +90,6 @@ public class PersonaController {
 			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 			LocalDate fnac,
 			@RequestParam(value = "idPais", required = false) Long idPais,
-			@RequestParam(value = "idVenta", required = false) Long idVenta,
 			@RequestParam(value = "idAficionGusta[]", required = false) List<Long> idGustos,
 			@RequestParam(value = "idAficionOdio[]", required = false) List<Long> idOdios,
 			HttpSession s) throws DangerException {
@@ -126,7 +125,6 @@ public class PersonaController {
 			//======NUEVA VENTA EN CURSO Y ASOCIAR A LA PERSONA ( REL. UNO A UNO)======//
 
 			Venta ventaEnCurso = new Venta();
-			ventaEnCurso = repoVenta.getOne(idVenta);
 			ventaEnCurso.setPersona(persona);
 			persona.setVentaencurso(ventaEnCurso);
 			

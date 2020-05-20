@@ -42,7 +42,6 @@
 
 			<td th:utext="${#strings.replace(persona.nace?.nombre,f,'<kbd>'+f+'</kbd>')}"></td>
 			
-			<td th:utext="${#strings.replace(persona.ventaencurso?.fecha,f,'<kbd>'+f+'</kbd>')}"></td>
 
 			<td>
 				<th:block th:each="gusto:${persona.gustos}" th:utext="|${#strings.replace(gusto.nombre,f,'<kbd>'+f+'</kbd>')} |"/>
