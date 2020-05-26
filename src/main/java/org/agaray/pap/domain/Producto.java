@@ -18,12 +18,12 @@ public class Producto {
 	private Long id;
 
 	private String nombre;
-
-	private String img;
-
+	
 	private Long stock;
-
+	
 	private Double precio;
+
+	private String foto;
 	
 	@OneToMany(mappedBy = "producto")
 	private Collection<LineaDeVenta> ldvs;
@@ -33,28 +33,22 @@ public class Producto {
 
 	// ===========================
 
-	public Long getId() {
-		return id;
-	}
-
-	public Collection<LineaDeVenta> getLdvs() {
-		return ldvs;
-	}
-
-	public void setLdvs(Collection<LineaDeVenta> ldvs) {
-		this.ldvs = ldvs;
-	}
-
+	
 	public Producto() {
 		this.ldvs = new ArrayList<LineaDeVenta>();
 	}
 
-	public Producto(String nombre, Long stock, Double precio) {
+	public Producto(String nombre, Long stock, Double precio, String foto) {
 		super();
 		this.nombre = nombre;
 		this.stock = stock;
 		this.precio = precio;
+		this.foto = foto;
 		this.ldvs = new ArrayList<LineaDeVenta>();
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public void setId(Long id) {
@@ -67,14 +61,6 @@ public class Producto {
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
-	}
-
-	public String getImg() {
-		return img;
-	}
-
-	public void setImg(String img) {
-		this.img = img;
 	}
 
 	public Long getStock() {
@@ -93,6 +79,22 @@ public class Producto {
 		this.precio = precio;
 	}
 
+	public String getFoto() {
+		return foto;
+	}
+
+	public void setFoto(String foto) {
+		this.foto = foto;
+	}
+
+	public Collection<LineaDeVenta> getLdvs() {
+		return ldvs;
+	}
+
+	public void setLdvs(Collection<LineaDeVenta> ldvs) {
+		this.ldvs = ldvs;
+	}
+
 	public Categoria getCategoria() {
 		return categoria;
 	}
@@ -100,6 +102,8 @@ public class Producto {
 	public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;
 	}
+
+	
 
 	// ========================
 

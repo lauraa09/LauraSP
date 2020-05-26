@@ -8,35 +8,33 @@
 	</a>
 	<table class="table table-striped">
 		<tr>
-			<th>Producto</th>
-			<th>Imagen</th>
-			<th>Precio</th>
-			<th>Stock</th>
+			<th>Nombre</th>
+			<th>Foto</th>
+			<th>Categoria</th>
 			<th>Acción</th>
 		</tr>
 
-		<tr th:each="p:${productos}">
-
-			<td th:text="${p.nombre}"></td>
-			<td><img th:src="${p.img}" height="40" width="40"/></td>
-			<td th:text="${p.precio}"></td>
-			<td th:text="${p.stock}"></td>
+		<tr th:each="producto:${productos}">
+			<td th:text="${producto.nombre}"></td>
+			<td><img th:src="|/img/upload/producto-${producto.id}.${producto.foto}|" height="50" width="50"/></td>
+			<td th:text="${producto.categoria.nombre}"></td>
 
 			<td class="row">
 				<form action="/producto/u" method="get">
-					<input type="hidden" name="id" th:value="${p.id}" />
+					<input type="hidden" name="id" th:value="${producto.id}" />
 					<button onclick="submit()">
 						<img src="/img/edit.png" height="20" width="20">
 					</button>
 				</form>
 				<form action="/producto/d" method="post">
-					<input type="hidden" name="id" th:value="${p.id}" />
-					<button onclick="submit()">
-						<img src="/img/delete.png" height="20" width="20">
-					</button>
+					<input type="hidden" name="id" th:value="${producto.id}" />
+					<span th:if="${producto.ldvs.size()== 0}">
+						<button onclick="submit()">
+							<img src="/img/delete.png" height="20" width="20">
+						</button>
+					</span>
 				</form>
 			</td>
 		</tr>
-
 	</table>
 </div>

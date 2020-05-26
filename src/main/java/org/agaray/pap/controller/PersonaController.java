@@ -47,10 +47,7 @@ public class PersonaController {
 
 	@Autowired
 	private AficionRepository repoAficion;
-	
-	@Autowired
-	private VentaRepository repoVenta;
-	
+		
 	
 	@Value("${app.uploadFolder}")
 	private String UPLOAD_FOLDER;
@@ -74,7 +71,6 @@ public class PersonaController {
 		H.isRolOK("admin", s);
 		m.put("paises", repoPais.findAll());
 		m.put("aficiones", repoAficion.findAll());
-		m.put("ventas", repoVenta.findAll());
 		m.put("view", "/persona/personaC");
 		return "/_t/frame";
 	}
@@ -124,7 +120,7 @@ public class PersonaController {
 		
 			//======NUEVA VENTA EN CURSO Y ASOCIAR A LA PERSONA ( REL. UNO A UNO)======//
 
-			Venta ventaEnCurso = new Venta();
+			Venta ventaEnCurso = new Venta(LocalDate.now());
 			ventaEnCurso.setPersona(persona);
 			persona.setVentaencurso(ventaEnCurso);
 			
@@ -157,9 +153,6 @@ public class PersonaController {
 //			String img = uploadDir + fileName + "." + fileExtension;
 //			persona.setImg(img);
 
-			
-
-			
 		} catch (Exception e) {
 			PRG.error("Error al crear " + nombre, "/persona/r");
 		}
