@@ -4,7 +4,7 @@ package org.agaray.pap.controller;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
 
@@ -17,6 +17,7 @@ import org.agaray.pap.helper.H;
 import org.agaray.pap.helper.PRG;
 import org.agaray.pap.repository.CategoriaRepository;
 import org.agaray.pap.repository.ProductoRepository;
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper.WarningHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -25,7 +26,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping(value = "/producto")
@@ -39,7 +44,29 @@ public class ProductoController {
 	
 	@Value("${app.uploadFolder}")
 	private String UPLOAD_FOLDER;
-
+	
+	
+	//===AJAX===//
+	@ResponseBody
+	@PostMapping(value = "ajaxProdExistente", produces = "text/plain")
+		public String ajaxProdExistente (
+				@RequestParam String nombreP, HttpSession s) throws JsonProcessingException, DangerException{
+				H.isRolOK("admin", s);
+				
+				
+				HashMap<String, Integer> nombreProducto= new HashMap<>();
+				
+				if (repoProducto.getByNombre(nombreP) != null) {
+					nombreProducto.put("coincide", 1);
+				}
+				else {
+					nombreProducto.put("coincide", 0);
+				}
+						
+			return new ObjectMapper().writeValueAsString(nombreProducto);
+					
+	}
+	
 	@PostMapping("d")
 	public String borrarPost(@RequestParam("id") Long idProducto, ModelMap m, HttpSession s) throws DangerException {
 		H.isRolOK("admin", s);

@@ -15,6 +15,8 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
 	public List <Producto> findAllByOrderByCategoriaNombreAscNombreAsc();
 
+	public Producto getByNombre(String nombre);
+
 
 	
 	

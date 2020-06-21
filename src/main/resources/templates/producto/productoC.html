@@ -24,9 +24,46 @@
 	</a>
 
 	<form method="post"  action="/producto/c" class="form" enctype="multipart/form-data">
-
-		Nombre <input type="text" name="nombre" autofocus="autofocus" class="form-item"> 
+		Nombre <input type="text" onkeyup="lanzarAjax();" required id="nombreId" name="nombre" autofocus="autofocus" class="form-item">
+		<div id="warning" style="display:none;"></div><br> 
 		<br/>
+		
+		
+		<script type="text/javascript">
+		// AJAX DE PRODUCTO
+		function mostrar(respuestaAJAX) {
+			
+			json = JSON.parse(respuestaAJAX);
+			if (json["coincide"] == 1) { 
+	    		mensaje ="<b>Advertencia</b>, este producto ya esta registrado.";
+	    		document.getElementById("warning").style="display:inline; margin-left:10px;";
+	    		document.getElementById("nombreId").classList.add("bg-warning");
+	    		document.getElementById("warning").innerHTML=mensaje;
+			}
+			else {
+				document.getElementById("warning").innerHTML='';
+				document.getElementById("nombreId").classList.remove('bg-warning');
+			}	
+		}
+		
+		function lanzarAjax() {
+			url = "http://localhost:8080/producto/ajaxProdExistente";
+				
+			x = new XMLHttpRequest();
+			x.open("POST", url, true);
+			x.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+			
+			x.send("nombreP="+document.getElementById('nombreId').value);
+			
+			x.onreadystatechange=function() {
+				if (x.readyState==4 && x.status==200) {
+					mostrar(x.responseText);
+				} 
+
+			//--disable-web-security --disable-gpu --user-data-dir=C:\tmp
+			}
+		}
+		</script>
 		
 		Stock inicial <input type="number" min="0" value="1" name="stock" class="form-item" > 
 		<br/>
